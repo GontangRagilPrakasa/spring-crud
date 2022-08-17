@@ -29,4 +29,22 @@ public class ProductController {
     {
         return  productService.save(productRequestDto);
     }
+
+    @RequestMapping(value = "product/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Object> getById(@PathVariable("id") long id)
+    {
+        return  productService.getById(id);
+    }
+
+    @RequestMapping(value = "product/{id}", method = RequestMethod.PUT, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public  ResponseEntity<Object> update(@PathVariable("id") long id, @ModelAttribute ProductRequestDto productRequestDto)
+    {
+        return productService.update(id, productRequestDto);
+    }
+
+    @RequestMapping(value = "product/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> delete(@PathVariable("id") long id)
+    {
+        return  productService.delete(id);
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -59,5 +60,82 @@ public class ProductService {
                 productDto,
                 HttpStatus.CREATED
         );
+    }
+
+    public ResponseEntity<Object> getById(long id)
+    {
+        Optional<ProductDao> productDao = productRepository.findById(id);
+        if (productDao.isPresent()) {
+            return ResponseUtil.build(
+                    true,
+                    HttpStatus.OK.value(),
+                    "Berhasil Ditemukan",
+                    productDao,
+                    HttpStatus.OK
+            );
+        } else {
+            return ResponseUtil.build(
+                    false,
+                    HttpStatus.NOT_FOUND.value(),
+                    "Tidak Berhasil Ditemukan",
+                    null,
+                    HttpStatus.NOT_FOUND
+            );
+        }
+    }
+
+    public ResponseEntity<Object> update(long id, ProductRequestDto requestDto)
+    {
+        Optional<ProductDao> productDao = productRepository.findById(id);
+        if (productDao.isPresent()) {
+            ProductDao productDao1 = productDao.get();
+            productDao1.setProductName(requestDto.getProductName());
+            productDao1.setProductDescription(requestDto.getProductDescription());
+            productRepository.save((productDao1));
+
+            ProductDto productDto = new ProductDto();
+            productDto.setId(productDao1.getId());
+            productDto.setProductName(productDao1.getProductName());
+
+            return ResponseUtil.build(
+                    true,
+                    HttpStatus.OK.value(),
+                    "Berhasil Ditemukan",
+                    productDto,
+                    HttpStatus.OK
+            );
+        } else {
+            return ResponseUtil.build(
+                    false,
+                    HttpStatus.NOT_FOUND.value(),
+                    "Tidak Berhasil Ditemukan",
+                    null,
+                    HttpStatus.NOT_FOUND
+            );
+        }
+    }
+
+    public ResponseEntity<Object> delete(long id)
+    {
+        Optional<ProductDao> productDao = productRepository.findById(id);
+        if (productDao.isPresent()) {
+            productRepository.deleteById(id);
+            return ResponseUtil.build(
+                    true,
+                    HttpStatus.OK.value(),
+                    "Berhasil Dihapus",
+                    null,
+                    HttpStatus.OK
+            );
+        } else {
+            return ResponseUtil.build(
+                    false,
+                    HttpStatus.NOT_FOUND.value(),
+                    "Tidak Berhasil Dihapus",
+                    null,
+                    HttpStatus.NOT_FOUND
+            );
+        }
+
     }
 }
